@@ -23,10 +23,11 @@ class ShopPage extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () => context.pushNamed(
-              AppRouteNames.trackingPage,
-              pathParameters: {'name': 'Cat'},
-            ),
+            onPressed: () => context.push('/shopPage/trackingPage/Cat'),
+            // onPressed: () => context.pushNamed(
+            //   AppRouteNames.trackingPage,
+            //   pathParameters: {'name': 'Cat'},
+            // ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,

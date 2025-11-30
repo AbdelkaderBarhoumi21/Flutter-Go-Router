@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_route_observer.dart';
 import 'package:go_router/go_router.dart';
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
   const DetailsPage({
     required this.name,
     required this.age,
@@ -12,6 +13,33 @@ class DetailsPage extends StatelessWidget {
   final String name;
   final int age;
   final Function(String) updateName;
+
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> with RouteAware {
+  late RouteObserver _routerObserver;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _routerObserver = appRouteObserver;
+      _routerObserver.subscribe(this, ModalRoute.of(context)!);
+    });
+  }
+
+  @override
+  void dispose() {
+    _routerObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPop() {
+    debugPrint('Product Details didPop');
+    super.didPop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,31 +57,18 @@ class DetailsPage extends StatelessWidget {
           children: [
             const Text('Details Screen'),
             const SizedBox(height: 16),
-            Text('Name: $name - Age: $age'),
+            Text('Name: ${widget.name} - Age: ${widget.age}'),
             const SizedBox(height: 16),
             GestureDetector(
-              onTap: () =>
-                  Navigator.pop(context, updateName("Hello world back again!")),
+              onTap: () => Navigator.pop(
+                context,
+                widget.updateName("Hello world back again!"),
+              ),
               child: Text('Update Name'),
             ),
+            const SizedBox(height: 16),
+            GestureDetector(onTap: () => context.pop(), child: Text('Go back')),
           ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => context.pushNamed(
-              AppRouteNames.trackingPage,
-              pathParameters: {'name': 'Cat'},
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-            child: Text('Tracking'),
-          ),
         ),
       ),
     );

@@ -34,9 +34,9 @@ class LoginPage extends StatelessWidget {
               appRouterNotifier.isLoggedIn = true;
             },
             // onPressed: () async {
-            //   // Persist login state
+              // Persist login state
             //   await AuthService().login();
-            //   // Navigate to dashboard (StatefulShellRoute)
+             // Navigate to dashboard (StatefulShellRoute)
             //   if (context.mounted) {
             //     context.goNamed(AppRouteNames.homePage);
             //   }

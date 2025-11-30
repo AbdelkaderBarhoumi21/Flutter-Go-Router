@@ -11,5 +11,6 @@ class AppRoutePaths {
   static const String productPage = '/productPage';
   static const String shopPage = '/shopPage';
   static const String settingsPage = '/settingsPage';
-  static const String trackingPage = '/trackingPage/:name';
+  static const String trackingPage =
+      '/trackingPage/:name'; //sub route should not start with /
 }

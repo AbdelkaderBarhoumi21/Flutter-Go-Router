@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_route_observer.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_paths.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_router_notifier.dart';
 import 'package:flutter_go_router_mastering/core/services/auth_service.dart';
 import 'package:flutter_go_router_mastering/features/dashboard/pages/dashboard_page.dart';
 import 'package:flutter_go_router_mastering/features/details/pages/product_details_page.dart';
+import 'package:flutter_go_router_mastering/features/error/pages/router_error_page.dart';
 import 'package:flutter_go_router_mastering/features/home/pages/home_page.dart';
 import 'package:flutter_go_router_mastering/features/login/pages/login_page.dart';
 import 'package:flutter_go_router_mastering/features/main/pages/main_page.dart';
@@ -17,11 +20,19 @@ import 'package:go_router/go_router.dart';
 final _authService = AuthService();
 
 final appRouterNotifier = AppRouterNotifier();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'shell',
+);
 
 final appRouter = GoRouter(
   initialLocation: AppRoutePaths.loginPage,
   //Change notifier implement =>Listenable? refreshListenable
   refreshListenable: appRouterNotifier,
+  navigatorKey: rootNavigatorKey,
+  observers: [appRouteObserver],
   redirect: (context, state) {
     final isLoggedIn = appRouterNotifier.isLoggedIn;
     // Cette logique sera re-exécutée à chaque notifyListeners()
@@ -93,22 +104,12 @@ final appRouter = GoRouter(
       builder: (context, state) => const LoginPage(),
     ),
 
-    // Tracking Page
-    GoRoute(
-      path: AppRoutePaths.trackingPage,
-      name: AppRouteNames.trackingPage,
-      builder: (context, state) {
-        final name = state.pathParameters['name'] ?? 'Unknown';
-
-        return TrackingPage(name: name);
-      },
-    ),
-
     // Dashboard page(Nav bar with StatefulShell)
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return DashboardPage(navigationShell: navigationShell);
       },
+      parentNavigatorKey: rootNavigatorKey,
       branches: <StatefulShellBranch>[
         //bottom tab - 1 => Home Page
         StatefulShellBranch(
@@ -136,17 +137,21 @@ final appRouter = GoRouter(
                 GoRoute(
                   path: AppRoutePaths.productDetailsPageSubRoute,
                   name: AppRouteNames.productDetailsPage,
-                  builder: (context, state) {
+                  parentNavigatorKey: rootNavigatorKey,
+
+                  pageBuilder: (context, state) {
                     final extra = state.extra as Map<String, dynamic>;
                     final name = extra['name'] ?? 'Unknown';
                     final age = extra['age'] ?? 'Unknown';
                     final updatedName =
                         extra['updatedName'] as Function(String);
 
-                    return DetailsPage(
-                      name: name,
-                      age: age,
-                      updateName: updatedName,
+                    return NoTransitionPage(
+                      child: DetailsPage(
+                        name: name,
+                        age: age,
+                        updateName: updatedName,
+                      ),
                     );
                   },
                 ),
@@ -160,9 +165,30 @@ final appRouter = GoRouter(
             GoRoute(
               path: AppRoutePaths.shopPage,
               name: AppRouteNames.shopPage,
+
               builder: (context, state) {
                 return const ShopPage();
               },
+              routes: [
+                // Tracking Page
+                GoRoute(
+                  path: AppRoutePaths.trackingPage,
+                  name: AppRouteNames.trackingPage,
+                  pageBuilder: (context, state) {
+                    final name = state.pathParameters['name'] ?? 'Unknown';
+                    return CustomTransitionPage(
+                      child: TrackingPage(name: name),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -181,4 +207,5 @@ final appRouter = GoRouter(
       ],
     ),
   ],
+  errorBuilder: (context, state) => RouterErrorPage(),
 );
