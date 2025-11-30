@@ -7,6 +7,7 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+       debugPrint('Build Product Screen');
     void updatedName(String value) => debugPrint(value);
     return Scaffold(
       appBar: AppBar(

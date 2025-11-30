@@ -7,6 +7,7 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Shop Screen');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

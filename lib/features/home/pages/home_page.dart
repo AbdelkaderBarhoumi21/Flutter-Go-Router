@@ -5,6 +5,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Home Screen');
     return DefaultTabController(
       length: 2,
       child: Scaffold(

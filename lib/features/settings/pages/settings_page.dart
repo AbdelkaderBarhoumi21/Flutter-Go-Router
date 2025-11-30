@@ -5,6 +5,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+       debugPrint('Build Settings Screen');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

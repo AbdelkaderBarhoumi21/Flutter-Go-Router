@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_paths.dart';
 import 'package:flutter_go_router_mastering/core/services/auth_service.dart';
@@ -19,13 +18,13 @@ final _authService = AuthService();
 final appRouter = GoRouter(
   initialLocation: AppRoutePaths.loginPage,
   redirect: (context, state) async {
-    debugPrint(state.name);
-    debugPrint('Full Path: ${state.fullPath}');
-    debugPrint('Path: ${state.path}');
-    debugPrint(state.matchedLocation);
-    debugPrint(state.pathParameters.toString());
-    debugPrint(state.extra.toString());
-    debugPrint(state.pageKey.toString());
+    // debugPrint(state.name);
+    // debugPrint('Full Path: ${state.fullPath}');
+    // debugPrint('Path: ${state.path}');
+    // debugPrint(state.matchedLocation);
+    // debugPrint(state.pathParameters.toString());
+    // debugPrint(state.extra.toString());
+    // debugPrint(state.pageKey.toString());
 
     // Check authentication state from persistent storage
     final isFirstTime = await _authService.isFirstTime();
