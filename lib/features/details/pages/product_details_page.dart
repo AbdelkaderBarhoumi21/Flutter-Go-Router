@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_go_router_mastering/core/extension/app_router_extension.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_observer.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_route_paths.dart';
 import 'package:go_router/go_router.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -43,6 +45,7 @@ class _DetailsPageState extends State<DetailsPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    void updatedName(String value) => debugPrint(value);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -68,6 +71,20 @@ class _DetailsPageState extends State<DetailsPage> with RouteAware {
             ),
             const SizedBox(height: 16),
             GestureDetector(onTap: () => context.pop(), child: Text('Go back')),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () {
+                final currentRoute = GoRouter.of(context).currentRoute;
+                if (currentRoute == AppRoutePaths.productDetailsPage) return;
+                final extra = <String, dynamic>{
+                  'name': 'Abdelkader',
+                  'age': 30,
+                  'updatedName': updatedName,
+                };
+                context.push(AppRoutePaths.productDetailsPage, extra: extra);
+              },
+              child: Text('Go To Details'),
+            ),
           ],
         ),
       ),
