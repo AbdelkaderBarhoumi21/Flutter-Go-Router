@@ -12,18 +12,14 @@ class ProductPage extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-
-        title: const Text('product', style: TextStyle(fontSize: 18)),
+        title: const Text('Product', style: TextStyle(fontSize: 18)),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(children: [
-          
-          ],
-        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(children: const []),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -39,7 +35,7 @@ class ProductPage extends StatelessWidget {
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
-            child: Text('Product Details'),
+            child: const Text('Product Details'),
           ),
         ),
       ),

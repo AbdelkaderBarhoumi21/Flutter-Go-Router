@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_paths.dart';
 import 'package:flutter_go_router_mastering/core/services/auth_service.dart';
+import 'package:flutter_go_router_mastering/features/dashboard/pages/dashboard_page.dart';
 import 'package:flutter_go_router_mastering/features/details/pages/product_details_page.dart';
 import 'package:flutter_go_router_mastering/features/home/pages/home_page.dart';
 import 'package:flutter_go_router_mastering/features/login/pages/login_page.dart';
 import 'package:flutter_go_router_mastering/features/main/pages/main_page.dart';
-import 'package:flutter_go_router_mastering/features/navigation/pages/app_navigation_page.dart';
 import 'package:flutter_go_router_mastering/features/onboarding/pages/onboarding_page.dart';
 import 'package:flutter_go_router_mastering/features/product/pages/product_page.dart';
 import 'package:flutter_go_router_mastering/features/settings/pages/settings_page.dart';
@@ -42,11 +42,9 @@ final appRouter = GoRouter(
       return AppRoutePaths.onboardingPage;
     }
 
-    // If logged in, go to navigation menu (unless already there or on a valid page)
-    if (isLoggedIn &&
-        currentPath != AppRoutePaths.navigationMenuPage &&
-        currentPath == AppRoutePaths.loginPage) {
-      return AppRoutePaths.navigationMenuPage;
+    // If logged in, go to dashboard home (unless already on dashboard pages)
+    if (isLoggedIn && currentPath == AppRoutePaths.loginPage) {
+      return AppRoutePaths.homePage; // First branch of StatefulShellRoute
     }
 
     // If not logged in and not first time, ensure user is on login or onboarding
@@ -60,12 +58,6 @@ final appRouter = GoRouter(
     return null; // No redirect needed
   },
   routes: <RouteBase>[
-    // App Navigation (Bottom Nav)
-    GoRoute(
-      path: AppRoutePaths.navigationMenuPage,
-      name: AppRouteNames.navigationMenuPage,
-      builder: (context, state) => const AppNavigationPage(),
-    ),
     // Onboarding Page
     GoRoute(
       path: AppRoutePaths.onboardingPage,
@@ -84,47 +76,7 @@ final appRouter = GoRouter(
       name: AppRouteNames.loginPage,
       builder: (context, state) => const LoginPage(),
     ),
-    // Home Page
-    GoRoute(
-      path: AppRoutePaths.homePage,
-      name: AppRouteNames.homePage,
-      builder: (context, state) => const HomePage(),
-    ),
-    // Settings Page
-    GoRoute(
-      path: AppRoutePaths.settingsPage,
-      name: AppRouteNames.settingsPage,
-      builder: (context, state) => const SettingsPage(),
-    ),
 
-    // Product Page
-    GoRoute(
-      path: AppRoutePaths.productPage,
-      name: AppRouteNames.productPage,
-      builder: (context, state) => const ProductPage(),
-      routes: <RouteBase>[
-        // Details Page
-        //sub router doesn't contain /
-        GoRoute(
-          path: AppRoutePaths.productDetailsPageSubRoute,
-          name: AppRouteNames.productDetailsPage,
-          builder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>;
-            final name = extra['name'] ?? 'Unknown';
-            final age = extra['age'] ?? 'Unknown';
-            final updatedName = extra['updatedName'] as Function(String);
-
-            return DetailsPage(name: name, age: age, updateName: updatedName);
-          },
-        ),
-      ],
-    ),
-    // Shop Page
-    GoRoute(
-      path: AppRoutePaths.shopPage,
-      name: AppRouteNames.shopPage,
-      builder: (context, state) => const ShopPage(),
-    ),
     // Tracking Page
     GoRoute(
       path: AppRoutePaths.trackingPage,
@@ -134,6 +86,83 @@ final appRouter = GoRouter(
 
         return TrackingPage(name: name);
       },
+    ),
+
+    // Dashboard page(Nav bar with StatefulShell)
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return DashboardPage(navigationShell: navigationShell);
+      },
+      branches: <StatefulShellBranch>[
+        //bottom tab - 1 => Home Page
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutePaths.homePage,
+              name: AppRouteNames.homePage,
+              builder: (context, state) {
+                return const HomePage();
+              },
+            ),
+          ],
+        ),
+
+        StatefulShellBranch(
+          routes: [
+            //bottom tab - 2  => Product Page
+            GoRoute(
+              path: AppRoutePaths.productPage,
+              name: AppRouteNames.productPage,
+              builder: (context, state) => const ProductPage(),
+              routes: <RouteBase>[
+                // Details Page
+                //sub router doesn't contain  => Product Details Page
+                GoRoute(
+                  path: AppRoutePaths.productDetailsPageSubRoute,
+                  name: AppRouteNames.productDetailsPage,
+                  builder: (context, state) {
+                    final extra = state.extra as Map<String, dynamic>;
+                    final name = extra['name'] ?? 'Unknown';
+                    final age = extra['age'] ?? 'Unknown';
+                    final updatedName =
+                        extra['updatedName'] as Function(String);
+
+                    return DetailsPage(
+                      name: name,
+                      age: age,
+                      updateName: updatedName,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: <RouteBase>[
+            //bottom tab - 3  => Shop Page
+            GoRoute(
+              path: AppRoutePaths.shopPage,
+              name: AppRouteNames.shopPage,
+              builder: (context, state) {
+                return const ShopPage();
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            //bottom tab - 4  => Settings Page
+            GoRoute(
+              path: AppRoutePaths.settingsPage,
+              name: AppRouteNames.settingsPage,
+              builder: (context, state) {
+                return const SettingsPage();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );

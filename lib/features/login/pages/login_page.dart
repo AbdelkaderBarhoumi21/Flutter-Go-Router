@@ -30,9 +30,9 @@ class LoginPage extends StatelessWidget {
             onPressed: () async {
               // Persist login state
               await AuthService().login();
-              // Navigate to navigation menu
+              // Navigate to dashboard (StatefulShellRoute)
               if (context.mounted) {
-                context.goNamed(AppRouteNames.navigationMenuPage);
+                context.goNamed(AppRouteNames.homePage);
               }
             },
             style: ElevatedButton.styleFrom(

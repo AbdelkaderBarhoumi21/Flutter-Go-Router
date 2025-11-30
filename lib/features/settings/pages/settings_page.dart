@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
         centerTitle: true,
         title: const Text('Settings', style: TextStyle(fontSize: 18)),
       ),
-      body: Center(child: Text('Settings Page')),
+      body: const Center(child: Text('Settings Page')),
     );
   }
 }

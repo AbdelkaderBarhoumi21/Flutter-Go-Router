@@ -14,14 +14,11 @@ class ShopPage extends StatelessWidget {
         title: const Text('Shop', style: TextStyle(fontSize: 18)),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(children: [
-           
-          ],
-        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(children: const []),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -33,7 +30,7 @@ class ShopPage extends StatelessWidget {
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
-            child: Text('Tracking'),
+            child: const Text('Tracking'),
           ),
         ),
       ),

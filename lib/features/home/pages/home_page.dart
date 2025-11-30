@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         body: const TabBarView(
           children: [
             Padding(padding: EdgeInsets.all(16.0), child: Text("Chat Screen")),
-            Center(child: Text("Group")),
+            Padding(padding: EdgeInsets.all(16.0), child: Text("Group Screen")),
           ],
         ),
       ),
