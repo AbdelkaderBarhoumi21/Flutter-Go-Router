@@ -1,5 +1,6 @@
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_paths.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_router_notifier.dart';
 import 'package:flutter_go_router_mastering/core/services/auth_service.dart';
 import 'package:flutter_go_router_mastering/features/dashboard/pages/dashboard_page.dart';
 import 'package:flutter_go_router_mastering/features/details/pages/product_details_page.dart';
@@ -15,47 +16,62 @@ import 'package:go_router/go_router.dart';
 
 final _authService = AuthService();
 
+final appRouterNotifier = AppRouterNotifier();
+
 final appRouter = GoRouter(
   initialLocation: AppRoutePaths.loginPage,
-  redirect: (context, state) async {
-    // debugPrint(state.name);
-    // debugPrint('Full Path: ${state.fullPath}');
-    // debugPrint('Path: ${state.path}');
-    // debugPrint(state.matchedLocation);
-    // debugPrint(state.pathParameters.toString());
-    // debugPrint(state.extra.toString());
-    // debugPrint(state.pageKey.toString());
-
-    // Check authentication state from persistent storage
-    final isFirstTime = await _authService.isFirstTime();
-    final isLoggedIn = await _authService.isLoggedIn();
-    //matchedLocation	Chemin de la route matchée	/productPage/productDetailsPage
-    //path	Définition du chemin de la route	productDetailsPage
-    //fullPath	Chemin complet avec params	/productPage/productDetailsPage?id=123
-    //name	Nom de la route	'productDetailsPage'
-    // Get current path to avoid redirect loops
-    final currentPath = state.matchedLocation;
-
-    // If first time, show onboarding (unless already there)
-    if (isFirstTime && currentPath != AppRoutePaths.onboardingPage) {
-      return AppRoutePaths.onboardingPage;
-    }
-
-    // If logged in, go to dashboard home (unless already on dashboard pages)
-    if (isLoggedIn && currentPath == AppRoutePaths.loginPage) {
-      return AppRoutePaths.homePage; // First branch of StatefulShellRoute
-    }
-
-    // If not logged in and not first time, ensure user is on login or onboarding
-    if (!isLoggedIn &&
-        !isFirstTime &&
-        currentPath != AppRoutePaths.loginPage &&
-        currentPath != AppRoutePaths.onboardingPage) {
+  //Change notifier implement =>Listenable? refreshListenable
+  refreshListenable: appRouterNotifier,
+  redirect: (context, state) {
+    final isLoggedIn = appRouterNotifier.isLoggedIn;
+    // Cette logique sera re-exécutée à chaque notifyListeners()
+    if (!isLoggedIn && state.matchedLocation != AppRoutePaths.loginPage) {
       return AppRoutePaths.loginPage;
     }
 
-    return null; // No redirect needed
+    if (isLoggedIn && state.matchedLocation == AppRoutePaths.loginPage) {
+      return AppRoutePaths.homePage;
+    }
   },
+  // redirect: (context, state) async {
+  // debugPrint(state.name);
+  // debugPrint('Full Path: ${state.fullPath}');
+  // debugPrint('Path: ${state.path}');
+  // debugPrint(state.matchedLocation);
+  // debugPrint(state.pathParameters.toString());
+  // debugPrint(state.extra.toString());
+  // debugPrint(state.pageKey.toString());
+
+  //   // Check authentication state from persistent storage
+  //   final isFirstTime = await _authService.isFirstTime();
+  //   final isLoggedIn = await _authService.isLoggedIn();
+  //matchedLocation	Chemin de la route matchée	/productPage/productDetailsPage
+  //path	Définition du chemin de la route	productDetailsPage
+  //fullPath	Chemin complet avec params	/productPage/productDetailsPage?id=123
+  //name	Nom de la route	'productDetailsPage'
+  // Get current path to avoid redirect loops
+  //   final currentPath = state.matchedLocation;
+
+  // If first time, show onboarding (unless already there)
+  //   if (isFirstTime && currentPath != AppRoutePaths.onboardingPage) {
+  //     return AppRoutePaths.onboardingPage;
+  //   }
+
+  // If logged in, go to dashboard home (unless already on dashboard pages)
+  //   if (isLoggedIn && currentPath == AppRoutePaths.loginPage) {
+  //     return AppRoutePaths.homePage; // First branch of StatefulShellRoute
+  //   }
+
+  // If not logged in and not first time, ensure user is on login or onboarding
+  //   if (!isLoggedIn &&
+  //       !isFirstTime &&
+  //       currentPath != AppRoutePaths.loginPage &&
+  //       currentPath != AppRoutePaths.onboardingPage) {
+  //     return AppRoutePaths.loginPage;
+  //   }
+
+  //   return null; // No redirect needed
+  // },
   routes: <RouteBase>[
     // Onboarding Page
     GoRoute(
@@ -63,6 +79,7 @@ final appRouter = GoRouter(
       name: AppRouteNames.onboardingPage,
       builder: (context, state) => const OnboardingPage(),
     ),
+
     // Main Page
     GoRoute(
       path: AppRoutePaths.mainPage,

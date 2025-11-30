@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_router_mastering/core/routing/app_route_names.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_router.dart';
+import 'package:flutter_go_router_mastering/core/routing/app_router_notifier.dart';
 import 'package:flutter_go_router_mastering/core/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,13 +30,17 @@ class LoginPage extends StatelessWidget {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () async {
-              // Persist login state
-              await AuthService().login();
-              // Navigate to dashboard (StatefulShellRoute)
-              if (context.mounted) {
-                context.goNamed(AppRouteNames.homePage);
-              }
+              context.goNamed(AppRouteNames.homePage);
+              appRouterNotifier.isLoggedIn = true;
             },
+            // onPressed: () async {
+            //   // Persist login state
+            //   await AuthService().login();
+            //   // Navigate to dashboard (StatefulShellRoute)
+            //   if (context.mounted) {
+            //     context.goNamed(AppRouteNames.homePage);
+            //   }
+            // },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
